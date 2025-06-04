@@ -1,0 +1,12 @@
+image_size: 256
+batch_size: 32
+channels: 3
+epochs: 70
+learning_rate: 0.001
+train_split: 0.8
+val_split: 0.1
+test_split: 0.1
+early_stopping_patience: 10
+reduce_lr_factor: 0.3
+reduce_lr_patience: 4
+min_lr: 1e-6
