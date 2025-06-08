@@ -1,6 +1,6 @@
 from fastapi import FastAPI,UploadFile,HTTPException
-from utils import *
-from config import USE_TF_SERVING
+from api.utils import *
+from api.config import USE_TF_SERVING,LOG_FILE,TF_SERVING_URL,LOG_LEVEL
 from pydantic import BaseModel
 import logging
 import uvicorn
@@ -9,16 +9,19 @@ import requests
 import os
 
 if USE_TF_SERVING:
-    from model_tf_serving import predict_tf_serving as predict_model
+    from api.model_tf_serving import predict_tf_serving as predict_model
 else:
-    from model_local import predict_local as predict_model
+    from api.model_local import predict_local as predict_model
 
-Path("api/logs").mkdir(parents=True, exist_ok=True)
+# Ensure logs directory exists
+Path(LOG_FILE).mkdir(parents=True, exist_ok=True)
+
+# Setup logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, LOG_LEVEL),
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("api/logs/api.log"),
+        logging.FileHandler(f"api/{LOG_FILE}"),
         logging.StreamHandler()  # also keeps logging to terminal
     ]
 )
@@ -39,7 +42,7 @@ async def health():
     logging.debug("/health endpoint called")
     if USE_TF_SERVING:
         try:
-            res = requests.get("http://localhost:8501/v1/models/tomato_model")
+            res = requests.get(TF_SERVING_URL)
             if res.status_code == 200:
                 return {"status": "ok", "mode": "tf-serving"}
             return {"status": "fail", "details": res.json()}
