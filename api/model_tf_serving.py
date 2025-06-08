@@ -1,8 +1,7 @@
 import requests
 import numpy as np
-from utils import CLASS_NAMES
-
-TF_SERVING_URL = "http://localhost:8501/v1/models/potatoes_model:predict"
+from api.utils import CLASS_NAMES
+from api.config import TF_SERVING_URL
 
 def predict_tf_serving(image: np.ndarray) -> dict:
     image_batch = np.expand_dims(image, 0).tolist()

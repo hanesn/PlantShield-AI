@@ -17,3 +17,19 @@ Confidence
 2025-06-08 11:47:53,016 - INFO - Prediction done in 0.4206s: {'Class': 'Early_blight', 'Confidence': 0.9992238283157349}
 2025-06-08 11:48:24,567 - INFO - Prediction done in 0.1626s: {'Class': 'mosaic_virus', 'Confidence': 0.9999402761459351}
 2025-06-08 11:53:14,107 - INFO - Model info endpoint hit. Responding with model path and number of classes.
+2025-06-08 19:57:51,072 - DEBUG - Using proactor: IocpProactor
+2025-06-08 19:58:01,882 - INFO - Model info endpoint hit. Responding with model path and number of classes.
+2025-06-08 19:58:09,728 - DEBUG - /health endpoint called
+2025-06-08 19:59:47,012 - DEBUG - Calling on_part_begin with no data
+2025-06-08 19:59:47,012 - DEBUG - Calling on_header_field with data[54:73]
+2025-06-08 19:59:47,013 - DEBUG - Calling on_header_value with data[75:164]
+2025-06-08 19:59:47,013 - DEBUG - Calling on_header_end with no data
+2025-06-08 19:59:47,014 - DEBUG - Calling on_header_field with data[166:178]
+2025-06-08 19:59:47,014 - DEBUG - Calling on_header_value with data[180:190]
+2025-06-08 19:59:47,014 - DEBUG - Calling on_header_end with no data
+2025-06-08 19:59:47,014 - DEBUG - Calling on_headers_finished with no data
+2025-06-08 19:59:47,014 - DEBUG - Calling on_part_data with data[194:20351]
+2025-06-08 19:59:47,015 - DEBUG - Calling on_part_end with no data
+2025-06-08 19:59:47,015 - DEBUG - Calling on_end with no data
+2025-06-08 19:59:47,605 - INFO - Prediction done in 0.5879s: {'Class': 'mosaic_virus', 'Confidence': 0.9999995231628418}
+2025-06-08 20:00:17,943 - DEBUG - /health endpoint called
