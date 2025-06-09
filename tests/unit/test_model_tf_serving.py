@@ -1,14 +1,30 @@
+import os
+os.environ["USE_TF_SERVING"] = "True"
+
+from fastapi.testclient import TestClient
+from api.main import app
 import numpy as np
-import pytest
-from api.model_tf_serving import predict_tf_serving
+from unittest.mock import patch
+from PIL import Image
+import io
 
-@pytest.mark.skip(reason="Requires live TF Serving running on localhost:8501")
-def test_predict_tf_serving():
-    dummy_image = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
-    result = predict_tf_serving(dummy_image)
+client = TestClient(app)
 
-    assert isinstance(result, dict)
-    assert "Class" in result
-    assert "Confidence" in result
-    assert isinstance(result["Class"], str)
-    assert isinstance(result["Confidence"], float)
+@patch("api.model_tf_serving.requests.post")
+def test_predict_tf_serving(mock_post):
+    mock_post.return_value.json.return_value = {
+        "predictions": [[0.1, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.9]]
+    }
+
+    dummy_image = Image.fromarray(np.uint8(np.random.rand(256, 256, 3) * 255))
+    buf = io.BytesIO()
+    dummy_image.save(buf, format='JPEG')
+    buf.seek(0)
+
+    res = client.post("/predict", files={"file": ("test.jpg", buf, "image/jpeg")})
+    assert res.status_code == 200
+    data = res.json()
+    print(data)
+    assert isinstance(data["Confidence"], float)
+    assert isinstance(data["Class"], str)
+    assert data["Class"] == "healthy"
