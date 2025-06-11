@@ -1,6 +1,6 @@
 from fastapi import FastAPI,UploadFile,HTTPException
 from api.utils import *
-from api.config import USE_TF_SERVING,LOG_FILE,TF_SERVING_URL,LOG_LEVEL
+from api.config import USE_TF_SERVING,LOG_FILE,TF_SERVING_HEALTH_URL,LOG_LEVEL
 from pydantic import BaseModel
 import logging
 import uvicorn
@@ -42,7 +42,7 @@ async def health():
     logging.debug("/health endpoint called")
     if USE_TF_SERVING:
         try:
-            res = requests.get(TF_SERVING_URL)
+            res = requests.get(TF_SERVING_HEALTH_URL)
             if res.status_code == 200:
                 return {"status": "ok", "mode": "tf-serving"}
             return {"status": "fail", "details": res.json()}
