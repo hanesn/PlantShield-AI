@@ -1,10 +1,11 @@
 import pytest
-pytestmark = pytest.mark.local
+pytestmark = pytest.mark.tf_serving
 
 import os
 import requests
 
 SERVER_URL = os.getenv("SERVER_URL", "http://localhost:8000")
+TF_SERVING_HEALTH_URL = os.getenv("TF_SERVING_HEALTH_URL", "http://localhost:8501/v1/models/tomatoes_model")
 
 def test_ping():
     res = requests.get(f"{SERVER_URL}/")
@@ -12,12 +13,13 @@ def test_ping():
     assert res.text == '"hello"'
 
 def test_health():
-    res = requests.get(f"{SERVER_URL}/health")
+    res = requests.get(f"{TF_SERVING_HEALTH_URL}")
     assert res.status_code == 200
     data = res.json()
-    assert "status" in data
-    assert data["status"] in ["ok", "fail"]
-    assert "mode" in data
+    assert "model_version_status" in data
+    assert "status" in data["model_version_status"][0]
+    assert "state" in data["model_version_status"][0]
+    assert data["model_version_status"][0]["state"] in ["AVAILABLE"]
 
 def test_model_info():
     res = requests.get(f"{SERVER_URL}/model-info")
