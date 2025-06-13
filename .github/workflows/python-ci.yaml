@@ -58,13 +58,16 @@ jobs:
         run: |
           echo "Waiting for TF Serving to be ready..."
           for i in {1..30}; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8501/v1/models/tomatoes_model)
-            if [ "$status" = "200" ]; then
-              echo "TF Serving is ready!"
-              break
+            http_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8501/v1/models/tomatoes_model || echo "000")
+            if [ "$http_status" = "200" ]; then
+              echo "✅ TF Serving is ready!"
+              exit 0
             fi
+            echo "Attempt $i: Server not ready ($http_status). Retrying..."
             sleep 2
           done
+          echo "::error::TF Serving did not start within expected time."
+          exit 1
 
       - name: Run integration tests
         run: pytest tests/integration
