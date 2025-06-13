@@ -32,7 +32,6 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
-    needs: unit-tests
 
     steps:
       - name: Checkout repo
@@ -60,18 +59,23 @@ jobs:
           for i in {1..30}; do
             http_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8501/v1/models/tomatoes_model || echo "000")
             if [ "$http_status" = "200" ]; then
-              echo "✅ TF Serving is ready!"
+              echo "TF Serving is ready!"
               exit 0
             fi
             echo "Attempt $i: Server not ready ($http_status). Retrying..."
-            sleep 2
+            sleep 5
           done
           echo "::error::TF Serving did not start within expected time."
           exit 1
+      
+      - name: check tf serving container logs
+        run: |
+          docker logs tf_serving_container
 
       - name: Run integration tests
         run: pytest tests/integration
 
       - name: Stop TensorFlow Serving
         if: always()
-        run: ./scripts/stop_tf_serving.sh
+        run: |
+          ./scripts/stop_tf_serving.sh
