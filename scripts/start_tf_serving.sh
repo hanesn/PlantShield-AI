@@ -25,8 +25,8 @@ docker rm -f $CONTAINER_NAME > /dev/null 2>&1 || true
 docker run -d \
   --name $CONTAINER_NAME \
   -p 8501:8501 \
-  -v "$(pwd)/../${MODEL_DIR}:/${TF_SERVING_MOUNT_PATH}" \
-  -v "$(pwd)/../${TF_SERVING_CONFIG_PATH}:/models.config" \
+  -v "$(pwd)/${MODEL_DIR}:/${TF_SERVING_MOUNT_PATH}" \
+  -v "$(pwd)/${TF_SERVING_CONFIG_PATH}:/models.config" \
   tensorflow/serving \
   --model_config_file=/models.config
 
