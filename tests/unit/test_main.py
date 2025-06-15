@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 from fastapi.testclient import TestClient
 from api.main import app
+from unittest.mock import patch
 
 client = TestClient(app)
 
@@ -27,7 +28,14 @@ def test_health():
     assert data["status"] in ["ok", "fail"]
     assert "mode" in data
 
-def test_predict():
+@patch("api.main.predict_model")
+def test_predict(mock_predict):
+    # Mock prediction response
+    mock_predict.return_value = {
+        "Class": "Healthy",
+        "Confidence": 0.987
+    }
+
     # Create a dummy image for testing
     dummy_image = Image.fromarray(np.uint8(np.random.rand(256, 256, 3) * 255))
     image_bytes = io.BytesIO()
@@ -38,6 +46,7 @@ def test_predict():
         "/predict",
         files={"file": ("test.jpg", image_bytes, "image/jpeg")}
     )
+
     assert res.status_code == 200
     data = res.json()
     assert "Class" in data
