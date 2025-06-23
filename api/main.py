@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import sys
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 if USE_TF_SERVING:
     from api.model_tf_serving import predict_tf_serving as predict_model
@@ -27,6 +28,14 @@ async def lifespan(app: FastAPI):
     yield  # Control passes to app here
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Setup logging
 logging.basicConfig(
