@@ -183,27 +183,38 @@ export const ImageUpload = () => {
     setIsloading(true);
 
     const doSendFile = async () => {
-      if (image) {
-        let formData = new FormData();
-        formData.append("file", selectedFile);
-        let res = await axios({
-          method: "post",
-          url: process.env.REACT_APP_API_URL,
-          data: formData,
-        });
+      if (!image) return;
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const useGCP = process.env.REACT_APP_USE_GCP === "true";
+      const url = useGCP
+        ? process.env.REACT_APP_GCP_API_URL
+        : process.env.REACT_APP_API_URL;
+
+      try {
+        const res = await axios.post(url, formData);
+
         if (isMounted.current) {
           if (res.status === 200) {
             setData(res.data);
           }
           setIsloading(false);
         }
+      } catch (error) {
+        if (isMounted.current) {
+          console.error("Prediction request failed:", error);
+          setIsloading(false);
+        }
       }
     };
+
 
     doSendFile();
 
     // No need for cancelled flag, use isMounted ref
-    return () => {};
+    return () => { };
   }, [preview, image, selectedFile]);
 
   const onSelectFile = (files) => {
@@ -227,7 +238,7 @@ export const ImageUpload = () => {
       <AppBar position="static" className={classes.appbar}>
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            tomato Disease Classification
+            Tomato Disease Classification
           </Typography>
           <div className={classes.grow} />
           <Avatar src={cblogo}></Avatar>
