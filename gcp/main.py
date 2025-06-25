@@ -2,6 +2,7 @@ from google.cloud import storage
 from tensorflow.keras.models import load_model
 from tensorflow import expand_dims
 from PIL import Image
+from flask import jsonify, make_response
 import numpy as np
 
 BUCKET_NAME = "tomato-disease-classification24"
@@ -29,10 +30,21 @@ def load_model_if_needed():
         model = load_model(MODEL_LOCAL_PATH)
 
 def predict(request):
+    origin = request.headers.get("Origin")
+    allowed_origins = ["http://localhost:3000", "http://localhost:3001"]
+
+    if request.method == "OPTIONS":
+        headers = {
+            "Access-Control-Allow-Origin": origin if origin in allowed_origins else "",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        }
+        return ('', 204, headers)
+    
     load_model_if_needed()
 
     if "file" not in request.files:
-        return {"error": "No file part in the request"}, 400
+        return jsonify({"error": "No file part in the request"}), 400
 
     try:
         file = request.files["file"]
@@ -43,6 +55,17 @@ def predict(request):
         predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
         confidence = float(np.max(predictions[0]) * 100)
 
-        return {"class": predicted_class, "confidence": round(confidence, 2)}
+        headers = {
+            "Access-Control-Allow-Origin": origin if origin in allowed_origins else "",
+        }
+
+        return make_response(
+            jsonify({"class": predicted_class, "confidence": round(confidence, 2)}),
+            200,
+            headers
+        )
     except Exception as e:
-        return {"error": str(e)}, 500
+        headers = {
+            "Access-Control-Allow-Origin": origin if origin in allowed_origins else "",
+        }
+        return make_response(jsonify({"error": str(e)}), 500, headers)

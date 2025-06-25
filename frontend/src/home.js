@@ -142,6 +142,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#be6a77 !important',
   }
 }));
+
 export const ImageUpload = () => {
   const classes = useStyles();
   const [selectedFile, setSelectedFile] = useState();
@@ -149,9 +150,8 @@ export const ImageUpload = () => {
   const [data, setData] = useState();
   const [image, setImage] = useState(false);
   const [isLoading, setIsloading] = useState(false);
-  let confidence = "";
-  // Add a ref to track mounted state
   const isMounted = React.useRef(true);
+  let confidence = 0;
 
   useEffect(() => {
     isMounted.current = true;
@@ -167,45 +167,6 @@ export const ImageUpload = () => {
     setPreview(null);
   };
 
-  useEffect(() => {
-    if (!selectedFile) {
-      setPreview(undefined);
-      return;
-    }
-    const objectUrl = URL.createObjectURL(selectedFile);
-    setPreview(objectUrl);
-  }, [selectedFile]);
-
-  useEffect(() => {
-    if (!preview) {
-      return;
-    }
-    setIsloading(true);
-
-    const doSendFile = async () => {
-      if (image) {
-        let formData = new FormData();
-        formData.append("file", selectedFile);
-        let res = await axios({
-          method: "post",
-          url: process.env.REACT_APP_API_URL,
-          data: formData,
-        });
-        if (isMounted.current) {
-          if (res.status === 200) {
-            setData(res.data);
-          }
-          setIsloading(false);
-        }
-      }
-    };
-
-    doSendFile();
-
-    // No need for cancelled flag, use isMounted ref
-    return () => {};
-  }, [preview, image, selectedFile]);
-
   const onSelectFile = (files) => {
     if (!files || files.length === 0) {
       setSelectedFile(undefined);
@@ -218,8 +179,54 @@ export const ImageUpload = () => {
     setImage(true);
   };
 
-  if (data && typeof data.Confidence !== "undefined" && data.Confidence !== null) {
-    confidence = (parseFloat(data.Confidence) * 100).toFixed(2);
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreview(undefined);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setPreview(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
+
+  useEffect(() => {
+    if (!preview) return;
+    setIsloading(true);
+
+    const doSendFile = async () => {
+      if (!image) return;
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const useGCP = process.env.REACT_APP_USE_GCP === "true";
+      const url = useGCP
+        ? process.env.REACT_APP_GCP_API_URL
+        : process.env.REACT_APP_API_URL;
+
+      try {
+        const res = await axios.post(url, formData);
+
+        if (isMounted.current) {
+          if (res.status === 200) {
+            const { class: predictedClass, confidence } = res.data;
+            setData({ predictedClass, confidence });
+          }
+          setIsloading(false);
+        }
+      } catch (error) {
+        if (isMounted.current) {
+          console.error("Prediction request failed:", error);
+          setIsloading(false);
+        }
+      }
+    };
+
+    doSendFile();
+  }, [preview, image, selectedFile]);
+
+  if (data && data.confidence !== undefined) {
+    confidence = parseFloat(data.confidence).toFixed(2);
   }
 
   return (
@@ -227,7 +234,7 @@ export const ImageUpload = () => {
       <AppBar position="static" className={classes.appbar}>
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            tomato Disease Classification
+            Tomato Disease Classification
           </Typography>
           <div className={classes.grow} />
           <Avatar src={cblogo}></Avatar>
@@ -244,61 +251,76 @@ export const ImageUpload = () => {
         >
           <Grid item xs={12}>
             <Card className={`${classes.imageCard} ${!image ? classes.imageCardEmpty : ''}`}>
-              {image && <CardActionArea>
-                <CardMedia
-                  className={classes.media}
-                  image={preview}
-                  component="img"
-                  title="Contemplative Reptile"
-                />
-              </CardActionArea>
-              }
-              {!image && <CardContent className={classes.content}>
-                <DropzoneArea
-                  acceptedFiles={['image/*']}
-                  dropzoneText={"Drag and drop an image of a tomato plant leaf to process"}
-                  onChange={onSelectFile}
-                />
-              </CardContent>}
-              {data && <CardContent className={classes.detail}>
-                <TableContainer component={Paper} className={classes.tableContainer}>
-                  <Table className={classes.table} size="small" aria-label="simple table">
-                    <TableHead className={classes.tableHead}>
-                      <TableRow className={classes.tableRow}>
-                        <TableCell className={classes.tableCell1}>Label:</TableCell>
-                        <TableCell align="right" className={classes.tableCell1}>Confidence:</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody className={classes.tableBody}>
-                      <TableRow className={classes.tableRow}>
-                        <TableCell component="th" scope="row" className={classes.tableCell}>
-                          {data && data.Class ? data.Class : "N/A"}
-                        </TableCell>
-                        <TableCell align="right" className={classes.tableCell}>
-                          {confidence ? `${confidence}%` : "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </CardContent>}
-              {isLoading && <CardContent className={classes.detail}>
-                <CircularProgress color="secondary" className={classes.loader} />
-                <Typography className={classes.title} variant="h6" noWrap>
-                  Processing
-                </Typography>
-              </CardContent>}
+              {image && (
+                <CardActionArea>
+                  <CardMedia
+                    className={classes.media}
+                    image={preview}
+                    component="img"
+                    title="Uploaded Leaf"
+                  />
+                </CardActionArea>
+              )}
+              {!image && (
+                <CardContent className={classes.content}>
+                  <DropzoneArea
+                    acceptedFiles={['image/*']}
+                    dropzoneText={"Drag and drop an image of a tomato plant leaf to process"}
+                    onChange={onSelectFile}
+                  />
+                </CardContent>
+              )}
+              {data && (
+                <CardContent className={classes.detail}>
+                  <TableContainer component={Paper} className={classes.tableContainer}>
+                    <Table className={classes.table} size="small" aria-label="simple table">
+                      <TableHead className={classes.tableHead}>
+                        <TableRow className={classes.tableRow}>
+                          <TableCell className={classes.tableCell1}>Label:</TableCell>
+                          <TableCell align="right" className={classes.tableCell1}>Confidence:</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody className={classes.tableBody}>
+                        <TableRow className={classes.tableRow}>
+                          <TableCell component="th" scope="row" className={classes.tableCell}>
+                            {data.predictedClass || "N/A"}
+                          </TableCell>
+                          <TableCell align="right" className={classes.tableCell}>
+                            {confidence ? `${confidence}%` : "N/A"}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+              )}
+              {isLoading && (
+                <CardContent className={classes.detail}>
+                  <CircularProgress color="secondary" className={classes.loader} />
+                  <Typography className={classes.title} variant="h6" noWrap>
+                    Processing
+                  </Typography>
+                </CardContent>
+              )}
             </Card>
           </Grid>
-          {data &&
-            <Grid item className={classes.buttonGrid} >
-
-              <ColorButton variant="contained" className={classes.clearButton} color="primary" component="span" size="large" onClick={clearData} startIcon={<Clear fontSize="large" />}>
+          {data && (
+            <Grid item className={classes.buttonGrid}>
+              <ColorButton
+                variant="contained"
+                className={classes.clearButton}
+                color="primary"
+                component="span"
+                size="large"
+                onClick={clearData}
+                startIcon={<Clear fontSize="large" />}
+              >
                 Clear
               </ColorButton>
-            </Grid>}
-        </Grid >
-      </Container >
-    </React.Fragment >
+            </Grid>
+          )}
+        </Grid>
+      </Container>
+    </React.Fragment>
   );
 };
