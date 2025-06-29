@@ -182,7 +182,7 @@ const App = () => {
         source={IMAGES.background}
         style={{ height: height, width: width, position: 'absolute' }}
       />
-      <Text style={styles.title}>{'AgroVision AI'}</Text>
+      <Text style={styles.title}>{'PlantShield AI'}</Text>
       <TouchableOpacity onPress={clearOutput} style={styles.clearStyle}>
         <Image source={IMAGES.clean} style={styles.clearImage} />
       </TouchableOpacity>
