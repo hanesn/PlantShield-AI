@@ -11,23 +11,28 @@ from pathlib import Path
 import sys
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import PrometheusFastApiInstrumentator
 
 if USE_TF_SERVING:
     from api.model_tf_serving import predict_tf_serving as predict_model
 else:
     from api.model_local import predict_local as predict_model
 
+app = FastAPI()
+
+if os.getenv("ENABLE_METRICS", "True") == "True":
+    PrometheusFastApiInstrumentator(excluded_handlers=["/metrics"]).instrument(app).expose(app)
+
 # Resolve log path relative to this file
 log_file_path = Path(__file__).parent / LOG_FILE
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Only create logs directory if not running tests
     if "pytest" not in sys.modules:
         log_file_path.parent.mkdir(parents=True, exist_ok=True)
-    yield  # Control passes to app here
+    yield
 
-app = FastAPI(lifespan=lifespan)
+app.router.lifespan_context = lifespan
 
 app.add_middleware(
     CORSMiddleware,
