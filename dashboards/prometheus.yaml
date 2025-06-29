@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'fastapi'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+    metrics_path: /metrics
+
+  - job_name: 'tf_serving'
+    static_configs:
+      - targets: ['tf_serving_container:8501']
+    metrics_path: /monitoring/prometheus/metrics
