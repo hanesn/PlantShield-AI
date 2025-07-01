@@ -14,3 +14,4 @@ opencv-python
 uvicorn
 httpx
 python-multipart
+prometheus-fastapi-instrumentator
