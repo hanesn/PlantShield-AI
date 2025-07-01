@@ -74,24 +74,24 @@ All plots are saved under `training/plots/`
 
 <table>
 <tr>
-  <td style="text-align:center"><strong>Accuracy & Loss</strong></td>
-  <td><img src="training/plots/accuracy_loss.png" alt="Accuracy & Loss" width="350"/></td>
+  <td><p align="center"><strong>Accuracy & Loss</strong></p></td>
+  <td><p align="center"><img src="training/plots/accuracy_loss.png" alt="Accuracy & Loss"/></p></td>
 </tr>
 <tr>
-  <td><img src="training/plots/confusion_matrix.png" alt="Confusion Matrix" width="350"/></td>
-  <td style="text-align:center"><strong>Confusion Matrix</strong></td>
+  <td><p align="center"><img src="training/plots/confusion_matrix.png" alt="Confusion Matrix" /></p></td>
+  <td><p align="center"><strong>Confusion Matrix</strong></p></td>
 </tr>
 <tr>
-  <td style="text-align:center"><strong>Classification Heatmap</strong></td>
-  <td><img src="training/plots/classification_report_heatmap.png" alt="Heatmap" width="350"/></td>
+  <td><p align="center"><strong>Classification Heatmap</strong></p></td>
+  <td><p align="center"><img src="training/plots/classification_report_heatmap.png" alt="Heatmap" /></p></td>
 </tr>
 <tr>
-  <td><img src="training/plots/classification_radar_per_class.png" alt="Radar Plot" width="350"/></td>
-  <td style="text-align:center"><strong>Per-Class Radar Plot</strong></td>
+  <td><p align="center"><img src="training/plots/classification_radar_per_class.png" alt="Radar Plot" /></p></td>
+  <td><p align="center"><strong>Per-Class Radar Plot</strong></p></td>
 </tr>
 <tr>
-  <td style="text-align:center"><strong>Classification Report</strong></td>
-  <td><img src="training/plots/classification_report.png" alt="Classification Report" width="350"/></td>
+  <td><p align="center"><strong>Classification Report</strong></p></td>
+  <td><p align="center"><img src="training/plots/classification_report.png" alt="Classification Report" /></p></td>
 </tr>
 </table>
 
@@ -150,9 +150,9 @@ All configured via the root-level `.env`
 
 <table>
 <tr>
-<td>
+<td width="40%">
 
-**Features:**
+<strong>Features:</strong>
 
 - 📤 Upload an image of a tomato leaf  
 - ⚡ Get real-time disease prediction  
@@ -161,24 +161,27 @@ All configured via the root-level `.env`
 > Controlled via `frontend/.env`
 
 </td>
-<td><img src="assets/web.png" alt="Web UI" width="400"/></td>
+<td width="60%">
+<img src="assets/web.png" alt="Web UI" />
+</td>
 </tr>
 </table>
-
 
 ## 📱 Mobile App
 
 <table>
 <tr>
-<td><img src="assets/mobile.png" alt="Mobile UI" width="200"/></td>
-<td>
+<td width="45%">
+<img src="assets/mobile.png" alt="Mobile UI"  />
+</td>
+<td width="55%">
 
-**Features:**
+<strong>Features:</strong>
 
 - 📸 Take a photo using the device camera  
 - 🖼️ Upload from gallery  
 - 📌 View predicted class + confidence  
-- 🧹 Clear/reset selected image 
+- 🧹 Clear/reset selected image  
 
 > **Backend:** GCP Cloud Function only
 
@@ -203,7 +206,7 @@ A **desktop launcher** built with `tkinter` to control the entire ML stack with 
 > Works on Windows, Linux, and macOS
 
 </td>
-<td><img src="assets/launcher.png" alt="Launcher GUI" width="400"/></td>
+<td><img src="assets/launcher.png" alt="Launcher GUI" /></td>
 </tr>
 </table>
 
