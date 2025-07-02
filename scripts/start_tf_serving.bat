@@ -26,6 +26,7 @@ if not defined TF_SERVING_CONFIG_PATH (
 )
 
 set CONTAINER_NAME=tf_serving_container
+set NETWORK_NAME=ml-monitoring
 set ROOT_DIR=%cd%
 
 REM Download the tensorflow serving docker image
@@ -35,11 +36,18 @@ REM Stop and remove any existing container
 docker stop %CONTAINER_NAME% >nul 2>&1
 docker rm %CONTAINER_NAME% >nul 2>&1
 
+@echo off
+docker network inspect %NETWORK_NAME% >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Creating Docker network %NETWORK_NAME%...
+    docker network create %NETWORK_NAME%
+)
+
 REM Actual docker run command
-docker run -d --name %CONTAINER_NAME% -p 8501:8501 ^
+docker run -d --name %CONTAINER_NAME% --network %NETWORK_NAME% -p 8501:8501 ^
   -v "%ROOT_DIR%\%MODEL_DIR%:/%TF_SERVING_MOUNT_PATH%" ^
   -v "%ROOT_DIR%\%TF_SERVING_CONFIG_PATH%:/models.config" ^
   tensorflow/serving --model_config_file=/models.config
 
 REM Report status
-echo TensorFlow Serving container started as '%CONTAINER_NAME%'
+echo TensorFlow Serving container started as %CONTAINER_NAME%
