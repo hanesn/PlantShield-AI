@@ -31,7 +31,7 @@ def load_model_if_needed():
 
 def predict(request):
     origin = request.headers.get("Origin")
-    allowed_origins = ["http://localhost:3000", "http://localhost:3001"]
+    allowed_origins = ["http://localhost:3000","https://plantshieldai.netlify.app/"]
 
     if request.method == "OPTIONS":
         headers = {
