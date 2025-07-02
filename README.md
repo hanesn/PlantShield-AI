@@ -1,5 +1,6 @@
 # 🌿 PlantShield AI
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/62a06db0-9093-44a9-b5c5-f2cb6e3654cf/deploy-status)](https://app.netlify.com/projects/plantshieldai/deploys)
 ![License](https://img.shields.io/github/license/hanesn/PlantShield-AI)
 ![Last Commit](https://img.shields.io/github/last-commit/hanesn/PlantShield-AI)
 ![CI](https://github.com/hanesn/PlantShield-AI/actions/workflows/python-ci.yaml/badge.svg)
