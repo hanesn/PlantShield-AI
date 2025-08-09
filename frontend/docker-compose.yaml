@@ -1,0 +1,11 @@
+services:
+  frontend:
+    image: hanessn/plantshield-frontend
+    container_name: plantshield-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: unless-stopped
+  

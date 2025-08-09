@@ -1,0 +1,66 @@
+services:
+  api:
+    image: hanessn/api-server
+    container_name: api_server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api/logs:/app/api/logs
+      - .env.docker:/app/.env
+      - ./saved_models:/app/saved_models
+    restart: unless-stopped
+    networks:
+      - server-network
+    depends_on:
+      - tf-serving
+  
+  tf-serving:
+    image: tensorflow/serving
+    container_name: tf-serving
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./saved_models:/models
+      - ./models.config:/models.config
+    command: --model_config_file=/models.config
+    networks:
+      - server-network
+  
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./dashboards/prometheus.yaml:/etc/prometheus/prometheus.yml
+    networks:
+      - server-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - server-network
+    
+  frontend:
+    image: hanessn/plantshield-frontend
+    container_name: plantshield-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - server-network
+
+volumes:
+  grafana-storage:
+
+networks:
+  server-network:
+    driver: bridge
