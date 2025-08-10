@@ -209,7 +209,8 @@ export const ImageUpload = () => {
 
         if (isMounted.current) {
           if (res.status === 200) {
-            const { class: predictedClass, confidence } = res.data;
+            const predictedClass = res.data.class || res.data.Class;
+            const confidence = res.data.confidence || res.data.Confidence;
             setData({ predictedClass, confidence });
           }
           setIsloading(false);
