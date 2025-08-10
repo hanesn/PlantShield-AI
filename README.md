@@ -15,35 +15,35 @@ A production-ready tomato plant disease classification system using a deep learn
   <h3 style="margin-top: 12px;">🌿 Deep Learning Powered Tomato Disease Classifier</h3>
 </div>
 
-## ✨ Features
+## Features
 
 ### Deep Learning
-- 🎯 Multiclass CNN model trained to classify **10 tomato plant diseases**
-- ✅ Achieved **98.51% test accuracy**
-- 🔍 Input shape: `(256, 256, 3)` | Batch size: `32` | 50 epochs
+- Multiclass CNN model trained to classify **10 tomato plant diseases**
+- Achieved **98.51% test accuracy**
+- Input shape: `(256, 256, 3)` | Batch size: `32` | 50 epochs
 
 ### Deployment Modes
-- 🧪 **Local Inference** via `.keras` model
-- 🐳 **TensorFlow Serving** using Docker container
-- ☁️ **GCP Cloud Function** for remote inference
+- **Local Inference** via `.keras` model
+- **TensorFlow Serving** using Docker container
+- **GCP Cloud Function** for remote inference
 
 ### Monitoring & Observability
-- 🔧 Integrated **Prometheus + Grafana** via Docker Compose
-- 📊 Custom dashboards (JSON-exported & version-controlled)
+- Integrated **Prometheus + Grafana** via Docker Compose
+- Custom dashboards (JSON-exported & version-controlled)
 
 ### Testing & CI
-- 🧪 Unit tests for training, backend utils, config, routing
-- 🔁 Integration tests covering all API endpoints
-- 🛠️ **CI/CD** with GitHub Actions — parallel execution of all tests
+- Unit tests for training, backend utils, config, routing
+- Integration tests covering all API endpoints
+- **CI/CD** with GitHub Actions — parallel execution of all tests
 
 ### Interfaces
-- 🖥️ **Frontend (React)**: Upload and predict via web UI (env-driven)
-- 📱 **Mobile App (React Native CLI)**: Supports camera + image picker
-- 🖱️ **Cross-platform GUI (tkinter)**: Manage API, TF Serving, monitoring, logs, `.env`, and project export
+- **Frontend (React)**: Upload and predict via web UI (env-driven)
+- **Mobile App (React Native CLI)**: Supports camera + image picker
+- **Cross-platform GUI (tkinter)**: Manage API, TF Serving, monitoring, logs, `.env`, and project export
 
 ### Tooling & Config
-- 🌍 Unified environment setup via `.env` (root + frontend)
-- 🧰 Start/Stop automation scripts using `make`, `.sh`, `.bat`, and GUI launcher
+- Unified environment setup via `.env` (root + frontend)
+- Start/Stop automation scripts using `make`, `.sh`, `.bat`, and GUI launcher
 
 ## Model Overview
 
@@ -155,9 +155,9 @@ All configured via the root-level `.env`
 
 <strong>Features:</strong>
 
-- 📤 Upload an image of a tomato leaf  
-- ⚡ Get real-time disease prediction  
-- 📌 View predicted class label and confidence score  
+- Upload an image of a tomato leaf  
+- Get real-time disease prediction  
+- View predicted class label and confidence score  
 
 > Controlled via `frontend/.env`
 
@@ -168,7 +168,7 @@ All configured via the root-level `.env`
 </tr>
 </table>
 
-## 📱 Mobile App
+## Mobile App
 
 <table>
 <tr>
@@ -179,10 +179,10 @@ All configured via the root-level `.env`
 
 <strong>Features:</strong>
 
-- 📸 Take a photo using the device camera  
-- 🖼️ Upload from gallery  
-- 📌 View predicted class + confidence  
-- 🧹 Clear/reset selected image  
+- Take a photo using the device camera  
+- Upload from gallery  
+- View predicted class + confidence  
+- Clear/reset selected image  
 
 > **Backend:** GCP Cloud Function only
 
@@ -190,7 +190,7 @@ All configured via the root-level `.env`
 </tr>
 </table>
 
-## 🖱️ GUI Launcher (Cross-platform)
+## GUI Launcher (Cross-platform)
 
 <table>
 <tr>
@@ -198,11 +198,11 @@ All configured via the root-level `.env`
 
 A **desktop launcher** built with `tkinter` to control the entire ML stack with a single click:
 
-- 🟢 Start / Stop FastAPI server  
-- 🐳 Start / Stop TF Serving & Monitoring stack  
-- 🛠️ Edit `.env` directly from the GUI  
-- 📦 Export `.zip` project archive  
-- 🧹 View & Clear logs  
+- Start / Stop FastAPI server  
+- Start / Stop TF Serving & Monitoring stack  
+- Edit `.env` directly from the GUI  
+- Export `.zip` project archive  
+- View & Clear logs  
 
 > Works on Windows, Linux, and macOS
 
@@ -286,7 +286,63 @@ In `frontend/.env`
 REACT_APP_USE_GCP=True
 ```
 
-## 🤝 Contributing
+## Docker Compose Deployment
+
+All monitoring stack (Prometheus + Grafana) and optional backend services can be started with Docker Compose.
+
+**1. Start all services**
+```bash
+docker compose up -d
+```
+
+**2. Stop all services**
+```bash
+docker compose down
+```
+
+## Kubernetes Deployment
+
+Deploy the PlantShield AI stack to any Kubernetes cluster.
+
+**1. Create namespace**
+```bash
+kubectl create namespace plantshield
+```
+
+**2. Apply manifests**
+```bash
+kubectl apply -k k8s/base
+```
+
+**3. Check pods**
+```bash
+kubectl get pods -n plantshield
+```
+
+**4. Expose services**
+
+  You can use `NodePort`, `LoadBalancer`, or an `Ingress` controller based on your environment.
+
+## Helm Deployment
+
+A Helm chart is provided to package and deploy the entire PlantShield AI application stack.
+
+**1. Install chart**
+```bash
+helm install plantshield helm/plantshield --namespace plantshield --create-namespace
+```
+
+**2. Upgrade release**
+```bash
+helm upgrade plantshield helm/plantshield -n plantshield
+```
+
+**3. Uninstall**
+```bash
+helm uninstall plantshield -n plantshield
+```
+
+## Contributing
 
 Contributions are welcome! Feel free to Open issues for bugs, enhancements, or questions. Submit pull requests with new features or fixes, Improve test coverage or monitoring setup
 
