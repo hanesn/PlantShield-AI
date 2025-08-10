@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tf-serving-config
+data:
+  models.config: |
+    model_config_list{
+        config{
+            name:'tomatoes_model'
+            base_path:'/models/tomatoes_model'
+            model_platform:'tensorflow'
+            model_version_policy:{
+                all:{}
+            }
+        }
+    }
