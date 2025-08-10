@@ -1,0 +1,6 @@
+resources:
+  - prometheus/
+  - grafana/
+  - api/
+  - tf-serving/
+  - frontend/
