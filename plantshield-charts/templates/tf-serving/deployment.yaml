@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tf-serving
+  labels:
+    app: tf-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tf-serving
+  template:
+    metadata:
+      labels:
+        app: tf-serving
+    spec:
+      containers:
+      - name: tf-serving
+        image: tensorflow/serving
+        ports:
+        - containerPort: 8501
+        volumeMounts:
+        - name: models-volume
+          mountPath: /models
+        - name: config-volume
+          mountPath: /models.config
+          subPath: models.config
+        command: ["tensorflow_model_server"]
+        args:
+          - "--model_config_file=/models.config"
+          - "--rest_api_port=8501"
+      volumes:
+      - name: models-volume
+        persistentVolumeClaim:
+          claimName: saved-models-pvc
+      - name: config-volume
+        configMap:
+          name: tf-serving-config

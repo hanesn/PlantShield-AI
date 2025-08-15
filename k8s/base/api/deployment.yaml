@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  labels:
+    app: api-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+      - name: api-server
+        image: hanessn/api-server
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /app/api/logs
+        - name: env-volume
+          mountPath: /app/.env
+          subPath: .env
+        - name: models-volume
+          mountPath: /app/saved_models
+      volumes:
+      - name: logs-volume
+        hostPath:
+          path: /home/docker/api/logs
+          type: Directory
+      - name: env-volume
+        configMap:
+          name: api-env
+      - name: models-volume
+        hostPath:
+          path: /home/docker/saved_models
+          type: Directory

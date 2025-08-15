@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plantshield-frontend
+  labels:
+    app: plantshield-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plantshield-frontend
+  template:
+    metadata:
+      labels:
+        app: plantshield-frontend
+    spec:
+      containers:
+      - name: plantshield-frontend
+        image: hanessn/plantshield-frontend
+        ports:
+        - containerPort: 80

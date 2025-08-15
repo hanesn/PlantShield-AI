@@ -1,0 +1,10 @@
+fastapi
+numpy
+Pillow
+prometheus_fastapi_instrumentator
+pydantic<2.3.0
+python-dotenv
+Requests
+tensorflow
+uvicorn
+python-multipart
